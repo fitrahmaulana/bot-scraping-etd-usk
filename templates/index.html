@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraper ETD USK</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f9; color: #333; max-width: 800px; margin: 40px auto; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #0056b3; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .container { margin-bottom: 30px; }
+        .form-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        #bacaID { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        #submitBtn { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; }
+        #submitBtn:hover { background-color: #0056b3; }
+        #submitBtn:disabled { background-color: #ccc; cursor: not-allowed; }
+        #log-container { background-color: #282c34; color: #abb2bf; padding: 15px; border-radius: 4px; height: 300px; overflow-y: auto; white-space: pre-wrap; font-family: monospace; border: 1px solid #444; }
+        #history-list { list-style-type: none; padding: 0; }
+        #history-list li { background-color: #fff; border: 1px solid #ddd; padding: 10px; margin-bottom: 5px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        #history-list a { text-decoration: none; color: #007bff; font-weight: bold; }
+        .path-info { background-color: #e9ecef; padding: 15px; border-radius: 5px; text-align: center; }
+        .path-info code { background-color: #fff; padding: 5px 8px; border-radius: 3px; user-select: all; }
+        .reload-link { color: #61dafb; cursor: pointer; text-decoration: underline; }
+        .reload-link:hover { color: #fff; }
+
+        /* --- CSS BARU UNTUK FOOTER KREDIT --- */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pengunduh Dokumen ETD</h1>
+        <div class="form-container">
+            <input type="text" id="bacaID" placeholder="Masukkan bacaID, contoh: 105248" value="105248">
+            <button id="submitBtn">Mulai Unduh</button>
+        </div>
+        <div id="log-container">Log proses akan muncul di sini...</div>
+    </div>
+    
+    <div class="container">
+        <h2>Riwayat Unduhan</h2>
+        <div class="path-info">
+            <p>Browser tidak bisa membuka folder otomatis demi keamanan.<br>File Anda disimpan di lokasi ini (silakan copy-paste ke Explorer):</p>
+            <code>{{ zip_folder_path }}</code>
+        </div>
+        <ul id="history-list">
+            {% if downloaded_files %}
+                {% for filename in downloaded_files %}
+                    <li>
+                        <a href="/download/{{ filename }}" class="history-link">{{ filename }}</a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li>Belum ada riwayat unduhan.</li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <footer>
+        <p>Dibuat oleh: <strong>Fitrah Maulana</strong> - Ilmu Pemerintahan, Universitas Syiah Kuala</p>
+    </footer>
+
+    <script>
+        // --- TIDAK ADA PERUBAHAN PADA JAVASCRIPT ---
+        const submitBtn = document.getElementById('submitBtn');
+        const bacaIDInput = document.getElementById('bacaID');
+        const logContainer = document.getElementById('log-container');
+        submitBtn.addEventListener('click', () => {
+            const bacaID = bacaIDInput.value.trim();
+            if (!bacaID) {
+                alert('Harap masukkan bacaID terlebih dahulu.');
+                return;
+            }
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Memproses...';
+            logContainer.innerHTML = '';
+            const eventSource = new EventSource(`/start-download?bacaID=${bacaID}`);
+            eventSource.onmessage = function(event) {
+                logContainer.innerHTML += event.data + '\n';
+                logContainer.scrollTop = logContainer.scrollHeight;
+            };
+            eventSource.addEventListener('end-of-stream', function(event) {
+                const data = JSON.parse(event.data);
+                logContainer.innerHTML += `✅ Proses unduh untuk file <b>${data.filename}</b> berhasil diselesaikan.\n`;
+                const reloadLink = document.createElement('a');
+                reloadLink.href = '#';
+                reloadLink.className = 'reload-link';
+                reloadLink.innerText = 'Klik di sini untuk memuat ulang dan memperbarui riwayat.';
+                reloadLink.onclick = function(e) {
+                    e.preventDefault();
+                    window.location.reload();
+                };
+                logContainer.appendChild(document.createElement('br'));
+                logContainer.appendChild(reloadLink);
+                logContainer.scrollTop = logContainer.scrollHeight;
+                eventSource.close();
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Mulai Unduh';
+            });
+            eventSource.onerror = function(err) {
+                logContainer.innerHTML += '❌ Koneksi ke server terputus atau terjadi error yang tidak terduga.\n';
+                logContainer.scrollTop = logContainer.scrollHeight;
+                eventSource.close();
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Mulai Unduh';
+            };
+        });
+    </script>
+    
+</body>
+</html>
