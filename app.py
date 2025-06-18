@@ -91,7 +91,7 @@ def scrape_and_zip(baca_id):
         time.sleep(1)
 
         # --- Loop untuk mengunduh setiap halaman ---
-        for page_num in range(1, 3):
+        for page_num in range(1, total_pages + 1):
             yield f"data: Memproses halaman {page_num} dari {total_pages}...\n\n"
             page_url = f"{base_url}&page={page_num}"
             page_response = session.get(page_url, verify=False)
