@@ -1,0 +1,4 @@
+beautifulsoup4==4.13.4
+Flask==2.2.5
+Requests==2.32.4
+urllib3==2.4.0
