@@ -122,7 +122,6 @@ def scrape_and_zip(baca_id):
         
         yield f"data: SELESAI! File ZIP berhasil dibuat.\n\n"
         
-        # --- PERUBAHAN UTAMA: MENGIRIM EVENT KHUSUS 'end-of-stream' ---
         # Siapkan data yang mau dikirim (nama file) dalam format JSON
         final_data = {"filename": zip_filename}
         # Kirim event dengan format: event: nama_event\n data: data_json\n\n
