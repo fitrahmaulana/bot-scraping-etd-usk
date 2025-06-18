@@ -8,6 +8,38 @@
         body { font-family: sans-serif; background-color: #f4f4f9; color: #333; max-width: 800px; margin: 40px auto; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h1, h2 { color: #0056b3; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .container { margin-bottom: 30px; }
+
+        /* --- CSS BARU UNTUK KOTAK INFO --- */
+        .info-box {
+            background-color: #e7f3fe; /* Warna biru muda yang lembut */
+            border-left: 5px solid #007bff; /* Garis biru di kiri sebagai penanda */
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 5px;
+            font-size: 0.95em;
+        }
+        .info-box p {
+            margin: 5px 0; /* Mengatur jarak antar paragraf di dalam kotak */
+        }
+        .info-box strong {
+            font-size: 1.1em;
+            color: #0056b3;
+        }
+        .info-box code {
+            background-color: rgba(0, 0, 0, 0.08);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .info-box mark {
+            background-color: #fff3cd; /* Warna stabilo kuning soft */
+            color: #333;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        /* --- Akhir CSS Kotak Info --- */
+
         .form-container { display: flex; gap: 10px; margin-bottom: 20px; }
         #bacaID { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
         #submitBtn { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; }
@@ -22,7 +54,6 @@
         .reload-link { color: #61dafb; cursor: pointer; text-decoration: underline; }
         .reload-link:hover { color: #fff; }
 
-        /* --- CSS BARU UNTUK FOOTER KREDIT --- */
         footer {
             text-align: center;
             margin-top: 40px;
@@ -36,8 +67,18 @@
 <body>
     <div class="container">
         <h1>Pengunduh Dokumen ETD</h1>
+        
+        <div class="info-box">
+            <p><strong>💡 Petunjuk Cara Menemukan <code>bacaID</code></strong></p>
+            <p>
+                Pada URL dokumen di situs ETD, perhatikan bagian <code>bacaID=...</code>. 
+                Angka setelahnya adalah ID yang perlu Anda masukkan di bawah ini. <br>
+                Contoh: <code>...&amp;bacaID=<mark>105248</mark>&amp;...</code>
+            </p>
+        </div>
+
         <div class="form-container">
-            <input type="text" id="bacaID" placeholder="Masukkan bacaID, contoh: 105248" value="105248">
+            <input type="text" id="bacaID" placeholder="Masukkan bacaID di sini...">
             <button id="submitBtn">Mulai Unduh</button>
         </div>
         <div id="log-container">Log proses akan muncul di sini...</div>
